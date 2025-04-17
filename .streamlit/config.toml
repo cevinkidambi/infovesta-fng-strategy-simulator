@@ -1,2 +1,10 @@
 [runtime]
 pythonVersion = "3.11"
+
+[theme]
+base="light"
+primaryColor="#E94F37"
+backgroundColor="#FFFFFF"
+secondaryBackgroundColor="#F7F7F7"
+textColor="#1A1A1A"
+font="sans serif"
