@@ -13,92 +13,83 @@ df = df[['date', 'FnG_Score', 'IDX80', 'LQ45']].dropna().sort_values('date').res
 # Inject custom CSS
 st.markdown("""
     <style>
-    .logo-container {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 1rem;
-    }
-    .logo-container img {
-        padding: 5px;
-        border-radius: 10px;
-    }
-    </style>
-""", unsafe_allow_html=True)
-st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-
-    .stTitle h1 {
-        font-family: 'Orbitron', sans-serif;
-        color: #FF4B4B;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-st.markdown("""
-    <style>
-    /* Hide Streamlit branding */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-
-    /* Wider layout */
+    /* Force content up by overriding Streamlit layout spacing */
     .block-container {
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        padding-left: 3rem;
-        padding-right: 3rem;
+        padding-top: 1rem !important;
+        padding-bottom: 2rem !important;
     }
-    /* Tweak table font */
+
+    .main > div:first-child {
+        margin-top: -3rem !important;
+    }
+
+    /* Hide Streamlit UI elements */
+    #MainMenu, header, footer {
+        visibility: hidden;
+    }
+
+    /* Background color and text */
+    html, body, [class*="css"]  {
+        background-color: #121212;
+        color: #f5f5f5;
+    }
+
+    /* Title font customization */
+    .stTitle h1 {
+        font-family: 'Orbitron', sans-serif !important;
+        color: #FF4B4B !important;
+        font-size: 2.5rem !important;
+        margin-bottom: 0.5rem;
+        margin-top: 0rem;
+    }
+
+    /* Sidebar title + markdown */
+    .sidebar .css-1v0mbdj, .sidebar .css-1x8cf1d {
+        font-family: 'Inter', sans-serif;
+        color: #f0f0f0;
+    }
+
+    /* Markdown headings and data labels */
+    h2, h3, h4 {
+        color: #f5f5f5;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Dataframe & Table formatting */
     .dataframe th, .dataframe td {
         font-size: 0.9rem;
         text-align: center;
-    }
-    /* Title font */
-    .stTitle h1 {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #1A1A1A;
-    }
-    /* Section headers */
-    h2 {
-        color: #333333;
-        margin-top: 1.5rem;
-    }
-    /* Plot spacing */
-    .element-container:has(.stPlotlyChart), .element-container:has(.stMarkdown) {
-        margin-top: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-    <style>
-    /* Force container upward to remove excess blank space */
-    .main > div:first-child {
-        padding-top: 0rem !important;
-        margin-top: -2rem !important;
+        color: white !important;
+        background-color: #1e1e1e !important;
     }
 
-    .block-container {
-        padding-top: 0rem !important;
+    /* Make logo more prominent */
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+        margin-top: 0rem;
     }
 
     .logo-container img {
-        margin-top: 0rem;
-        margin-bottom: 1rem;
+        background-color: #fff;
+        padding: 4px;
+        border-radius: 8px;
     }
     </style>
+
+    <!-- Orbitron Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 """, unsafe_allow_html=True)
 
 # Sidebar
-st.title("📈 Infovesta FnG Risk-Adjusted Strategy Simulator")
-
 st.markdown("""
 <div class="logo-container">
-    <img src="data:image/png;base64,%s" width="480">
+    <img src="data:image/png;base64,%s" width="300">
 </div>
-""" % base64.b64encode(open("logo_infovesta.png", "rb").read()).decode(), unsafe_allow_html=True)
+""" % base64.b64encode(open("logo_infovesta.png", "rb").read()).decode(), unsafe_allow_html=True), unsafe_allow_html=True)
+
+st.title("📈 Infovesta FnG Risk-Adjusted Strategy Simulator")
 
 # Define min/max date from dataset
 min_date = df['date'].min().date()
