@@ -9,6 +9,7 @@ df = pd.read_excel("testing3.xlsx")
 df['date'] = pd.to_datetime(df['date'])
 df = df.rename(columns={"FnG_Prev": "FnG_Score"})
 df = df[['date', 'FnG_Score', 'IDX80', 'LQ45']].dropna().sort_values('date').reset_index(drop=True)
+
 # Inject custom CSS
 st.markdown("""
     <style>
@@ -95,6 +96,18 @@ min_date = df['date'].min().date()
 max_date = df['date'].max().date()
 
 # Layout: Index and Risk Mode
+with st.sidebar.expander("ℹ️ About this app"):
+    st.markdown("""
+    **Infovesta FnG Risk-Adjusted Strategy Simulator**
+
+    This tool allows you to simulate performance of various DCA-based investment strategies on **IDX80** and **LQ45**, guided by the **Infovesta Fear & Greed Index**.
+
+    📅 **Data Range**: 4 Feb 2020 — 10 Apr 2025  
+    🧠 **Strategies Covered**:  
+    - Risk-adjusted using FnG signals  
+    - Buy & Hold  
+    - Daily & Weekly DCA  
+    """)
 col1, col2 = st.columns(2)
 with col1:
     benchmark_index = st.selectbox("📊 Select Benchmark Index", ["IDX80", "LQ45"])
