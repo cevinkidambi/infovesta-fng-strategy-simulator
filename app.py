@@ -75,7 +75,7 @@ st.markdown("""
 <div class="logo-container">
     <img src="data:image/png;base64,%s" width="480">
 </div>
-""" % base64.b64encode(open("/Users/nonee/Desktop/logo_infovesta.png", "rb").read()).decode(), unsafe_allow_html=True)
+""" % base64.b64encode(open("logo_infovesta.png", "rb").read()).decode(), unsafe_allow_html=True)
 
 st.markdown("""
 This tool allows you to simulate performance of various DCA-based investment strategies on **IDX80** and **LQ45**, guided by the **Infovesta Fear & Greed Index**.
