@@ -80,17 +80,6 @@ st.markdown("""
 </div>
 """ % base64.b64encode(open("logo_infovesta.png", "rb").read()).decode(), unsafe_allow_html=True)
 
-st.markdown("""
-This tool allows you to simulate performance of various DCA-based investment strategies on **IDX80** and **LQ45**, guided by the **Infovesta Fear & Greed Index**.
-
-📅 **Data Range**: 4 Feb 2020 — 10 Apr 2025  
-🧠 **Strategies Covered**:  
-- Risk-adjusted using FnG signals  
-- Buy & Hold  
-- Daily & Weekly DCA  
-""")
-
-
 # Define min/max date from dataset
 min_date = df['date'].min().date()
 max_date = df['date'].max().date()
@@ -107,6 +96,23 @@ with st.sidebar.expander("ℹ️ About this app"):
     - Risk-adjusted using FnG signals  
     - Buy & Hold  
     - Daily & Weekly DCA  
+    """)
+with st.sidebar.expander("ℹ️ About Infovesta Fear & Greed Index"):
+    st.markdown("""
+    **What is it?**
+
+    The Infovesta Fear and Greed (FnG) Index is a sentiment indicator ranging from 0 (extreme fear) to 100 (extreme greed), which is inspired by CNN’s Fear & Greed Index. While CNN uses 7 Fear & Greed indicators, the Infovesta FnG Index is an aggregate of 9 distinct indicators, each gauging a specific dimension of stock market activity. These indicators include BTC/IDR, JCI Foreign Flow, GOLD Spot, Market Momentum, IDX80 Mcclellan Summation Index (MSI), IDX80 Mcclellan Volume Summation Index (MVSI), Stock-Bond Spread, USD/IDR Spot, and Stock Price Strength. The Index assesses the deviation of each individual indicator, in relation to its typical fluctuations. The Index assigns equal weight to each indicator to avoid outliers. Each indicator is updated as soon as new data is available, including in weekends and after hours.
+
+    ### 🧠 FnG Index Levels
+    Below is the official interpretation of Fear & Greed levels:
+    
+    | **Levels**         | **Thresholds** |
+    |--------------------|----------------|
+    | Extreme Greed      | 76–100         |
+    | Greed              | 60–75          |
+    | Neutral            | 45–59          |
+    | Fear               | 26–45          |
+    | Extreme Fear       | 0–25           |
     """)
 col1, col2 = st.columns(2)
 with col1:
