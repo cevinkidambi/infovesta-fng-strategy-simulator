@@ -9,7 +9,6 @@ df = pd.read_excel("testing3.xlsx")
 df['date'] = pd.to_datetime(df['date'])
 df = df.rename(columns={"FnG_Prev": "FnG_Score"})
 df = df[['date', 'FnG_Score', 'IDX80', 'LQ45']].dropna().sort_values('date').reset_index(drop=True)
-
 # Inject custom CSS
 st.markdown("""
     <style>
@@ -24,7 +23,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
@@ -35,7 +33,6 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
-
 st.markdown("""
     <style>
     /* Hide Streamlit branding */
@@ -50,26 +47,22 @@ st.markdown("""
         padding-left: 3rem;
         padding-right: 3rem;
     }
-
     /* Tweak table font */
     .dataframe th, .dataframe td {
         font-size: 0.9rem;
         text-align: center;
     }
-
     /* Title font */
     .stTitle h1 {
         font-size: 2.2rem;
         font-weight: 700;
         color: #1A1A1A;
     }
-
     /* Section headers */
     h2 {
         color: #333333;
         margin-top: 1.5rem;
     }
-
     /* Plot spacing */
     .element-container:has(.stPlotlyChart), .element-container:has(.stMarkdown) {
         margin-top: 1.5rem;
