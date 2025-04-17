@@ -5,7 +5,7 @@ import base64
 import matplotlib.pyplot as plt
 
 # Load the dataset
-df = pd.read_excel("/Users/nonee/Downloads/testing3.xlsx")
+df = pd.read_excel("testing3.xlsx")
 df['date'] = pd.to_datetime(df['date'])
 df = df.rename(columns={"FnG_Prev": "FnG_Score"})
 df = df[['date', 'FnG_Score', 'IDX80', 'LQ45']].dropna().sort_values('date').reset_index(drop=True)
