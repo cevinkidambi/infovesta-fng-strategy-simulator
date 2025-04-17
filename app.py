@@ -199,6 +199,8 @@ ax.set_ylabel("Return (%)")
 ax.set_xlabel("Date")
 ax.axhline(0, linestyle="--", color="gray")
 ax.legend()
+fig.patch.set_alpha(0)
+ax.set_facecolor('none')
 st.pyplot(fig)
 
 
