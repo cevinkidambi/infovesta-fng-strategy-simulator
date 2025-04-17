@@ -44,7 +44,7 @@ st.markdown("""
     /* Wider layout */
     .block-container {
         padding-top: 0.5rem;
-        padding-bottom: 2rem;
+        padding-bottom: 0.5rem;
         padding-left: 3rem;
         padding-right: 3rem;
     }
