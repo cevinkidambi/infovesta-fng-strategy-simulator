@@ -224,6 +224,20 @@ df_filtered['DCA_Weekly_Return'] = (df_filtered['DCA_Weekly_Value'] - df_filtere
 
 # Plot
 st.subheader("📊 Cumulative Return Comparison")
+
+mpl.rcParams.update({
+    'text.color': 'white',
+    'axes.labelcolor': 'white',
+    'xtick.color': 'white',
+    'ytick.color': 'white',
+    'axes.edgecolor': 'white',
+    'axes.titlecolor': 'white',
+    'legend.edgecolor': 'white',
+    'legend.facecolor': 'none',
+    'axes.facecolor': 'none',
+    'figure.facecolor': 'none'
+})
+
 fig, ax = plt.subplots(figsize=(12, 6))
 ax.plot(df_filtered['date'], df_filtered['FnG_Return'], label='Risk-Adjusted FnG Strategy')
 ax.plot(df_filtered['date'], df_filtered['BuyHold_Return'], label='Buy & Hold')
