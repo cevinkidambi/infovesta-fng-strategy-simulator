@@ -83,11 +83,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Sidebar
-st.markdown("""
+logo_base64 = base64.b64encode(open("logo_infovesta.png", "rb").read()).decode()
+st.markdown(f"""
 <div class="logo-container">
-    <img src="data:image/png;base64,%s" width="300">
+    <img src="data:image/png;base64,{logo_base64}" width="300">
 </div>
-""" % base64.b64encode(open("logo_infovesta.png", "rb").read()).decode(), unsafe_allow_html=True), unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 st.title("📈 Infovesta FnG Risk-Adjusted Strategy Simulator")
 
