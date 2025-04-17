@@ -66,8 +66,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
-
 # Sidebar
 st.title("📈 Infovesta FnG Risk-Adjusted Strategy Simulator")
 
