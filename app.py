@@ -223,8 +223,6 @@ df_filtered['DCA_Daily_Return'] = (df_filtered['DCA_Daily_Value'] - df_filtered[
 df_filtered['DCA_Weekly_Return'] = (df_filtered['DCA_Weekly_Value'] - df_filtered['DCA_Weekly_Invested']) / df_filtered['DCA_Weekly_Invested'] * 100
 
 # Plot
-st.subheader("📊 Cumulative Return Comparison")
-
 mpl.rcParams.update({
     'text.color': 'white',
     'axes.labelcolor': 'white',
@@ -237,7 +235,7 @@ mpl.rcParams.update({
     'axes.facecolor': 'none',
     'figure.facecolor': 'none'
 })
-
+st.subheader("📊 Cumulative Return Comparison")
 fig, ax = plt.subplots(figsize=(12, 6))
 ax.plot(df_filtered['date'], df_filtered['FnG_Return'], label='Risk-Adjusted FnG Strategy')
 ax.plot(df_filtered['date'], df_filtered['BuyHold_Return'], label='Buy & Hold')
