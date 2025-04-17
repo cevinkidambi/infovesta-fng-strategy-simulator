@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import base64
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 # Load the dataset
 df = pd.read_excel("testing3.xlsx")
