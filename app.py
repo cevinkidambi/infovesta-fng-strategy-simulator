@@ -71,6 +71,26 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+    /* Force container upward to remove excess blank space */
+    .main > div:first-child {
+        padding-top: 0rem !important;
+        margin-top: -2rem !important;
+    }
+
+    .block-container {
+        padding-top: 0rem !important;
+    }
+
+    .logo-container img {
+        margin-top: 0rem;
+        margin-bottom: 1rem;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # Sidebar
 st.title("📈 Infovesta FnG Risk-Adjusted Strategy Simulator")
 
