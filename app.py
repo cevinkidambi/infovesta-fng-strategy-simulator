@@ -27,6 +27,17 @@ st.markdown("""
 
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+    .stTitle h1 {
+        font-family: 'Orbitron', sans-serif;
+        color: #FF4B4B;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
     /* Hide Streamlit branding */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
