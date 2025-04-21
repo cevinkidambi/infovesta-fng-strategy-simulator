@@ -116,7 +116,7 @@ with st.sidebar.expander("ℹ️ About Infovesta Fear & Greed Index"):
 
     The Infovesta Fear and Greed (FnG) Index is a sentiment indicator ranging from 0 (extreme fear) to 100 (extreme greed), which is inspired by CNN’s Fear & Greed Index. While CNN uses 7 Fear & Greed indicators, the Infovesta FnG Index is an aggregate of 9 distinct indicators, each gauging a specific dimension of stock market activity. These indicators include BTC/IDR, JCI Foreign Flow, GOLD Spot, Market Momentum, IDX80 Mcclellan Summation Index (MSI), IDX80 Mcclellan Volume Summation Index (MVSI), Stock-Bond Spread, USD/IDR Spot, and Stock Price Strength. The Index assesses the deviation of each individual indicator, in relation to its typical fluctuations. The Index assigns equal weight to each indicator to avoid outliers. Each indicator is updated as soon as new data is available, including in weekends and after hours.
 
-    ###FnG Index Levels
+    ### FnG Index Levels
     Below is our interpretation of Fear & Greed levels:
     
     | **Levels**         | **Thresholds** |
