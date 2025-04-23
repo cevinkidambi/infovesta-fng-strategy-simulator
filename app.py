@@ -301,12 +301,15 @@ def calculate_cagr(final_value, invested, start, end):
 def calculate_twrr(values, invested):
     sub_returns = []
     for i in range(1, len(values)):
-        prev = values[i - 1]
-        current = values[i]
-        flow = invested[i] - invested[i - 1]
-        if prev != 0:
-            r = (current - prev - flow) / prev
-            sub_returns.append(1 + r)
+        if invested[i] == invested[i - 1]:  # No new investment, normal return
+            r = values[i] / values[i - 1]
+        else:  # Investment added, calculate return excluding the new flow
+            flow = invested[i] - invested[i - 1]
+            if values[i - 1] != 0:
+                r = (values[i] - flow) / values[i - 1]
+            else:
+                continue
+        sub_returns.append(r)
     return (np.prod(sub_returns) - 1) * 100
 
 summary["CAGR (%)"] = [
