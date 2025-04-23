@@ -301,19 +301,24 @@ def calculate_cagr(final_value, invested, start, end):
 def calculate_twrr(values, invested):
     twrr_parts = []
     for i in range(1, len(values)):
+        prev = values[i - 1]
+        current = values[i]
         flow = invested[i] - invested[i - 1]
+
+        if prev == 0:
+            continue  # skip this subperiod due to invalid base
+
         if flow != 0:
-            # New investment → start new subperiod
-            if values[i - 1] != 0:
-                r = (values[i] - flow) / values[i - 1]
-                twrr_parts.append(1 + r)
+            r = (current - flow) / prev
         else:
-            # No investment flow → normal return
-            if values[i - 1] != 0:
-                r = values[i] / values[i - 1]
-                twrr_parts.append(r)
+            r = current / prev
+
+        if np.isfinite(r):
+            twrr_parts.append(r)
+
     if len(twrr_parts) == 0:
         return 0.0
+
     return (np.prod(twrr_parts) - 1) * 100
 
 summary["CAGR (%)"] = [
