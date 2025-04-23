@@ -223,6 +223,24 @@ df_filtered['BuyHold_Return'] = (df_filtered['BuyHold_Value'] - df_filtered['Buy
 df_filtered['DCA_Daily_Return'] = (df_filtered['DCA_Daily_Value'] - df_filtered['DCA_Daily_Invested']) / df_filtered['DCA_Daily_Invested'] * 100
 df_filtered['DCA_Weekly_Return'] = (df_filtered['DCA_Weekly_Value'] - df_filtered['DCA_Weekly_Invested']) / df_filtered['DCA_Weekly_Invested'] * 100
 
+def calc_twr(value: pd.Series, invested: pd.Series) -> float:
+    """
+    Time-weighted return in %, independent of cash-flow timing.
+    value    : portfolio value series (same dates / index as invested)
+    invested : running total of capital contributed (+) or withdrawn (–)
+    """
+    # cash flow occurring **at** the timestamp (first row = initial funding)
+    cf = invested.diff().fillna(invested)
+
+    # portfolio value just **before** each cash flow hits
+    prev = (value - cf).shift(1)
+    # skip the very first row – there is no prior period return
+    period_ret = (value[1:] - cf[1:]) / prev[1:]
+
+    # geometric linking
+    twr = period_ret.prod() - 1
+    return twr * 100   
+
 # Plot
 mpl.rcParams.update({
     'text.color': 'white',
@@ -283,6 +301,13 @@ strategies = {
     'DCA Weekly': df_filtered['DCA_Weekly_Return']
 }
 
+summary["TWR (%)"] = [
+    calc_twr(df_filtered['FnG_Value'],        df_filtered['FnG_Invested']),
+    calc_twr(df_filtered['BuyHold_Value'],    df_filtered['BuyHold_Invested']),
+    calc_twr(df_filtered['DCA_Daily_Value'],  df_filtered['DCA_Daily_Invested']),
+    calc_twr(df_filtered['DCA_Weekly_Value'], df_filtered['DCA_Weekly_Invested'])
+]
+
 reward_risk_data = []
 for strategy_name in summary["Strategy"]:
     returns = strategies[strategy_name]
@@ -292,7 +317,6 @@ for strategy_name in summary["Strategy"]:
     reward_risk_data.append(reward_risk)
 
 summary["Reward/Risk"] = reward_risk_data
-
 
 def calculate_cagr(final_value, invested, start, end):
     years = (end - start).days / 365.25
@@ -355,6 +379,7 @@ st.dataframe(summary.set_index("Strategy").style.format({
     "Total Invested": "Rp{:,.0f}",
     "Final Value": "Rp{:,.0f}",
     "Return (%)": "{:.2f}",
+    "TWR (%)": "{:.2f}",
     "Reward/Risk": "{:.2f}",
     "Max Upside (%)": "{:.2f}",
     "Max Downside (%)": "{:.2f}",
