@@ -225,20 +225,18 @@ df_filtered['DCA_Weekly_Return'] = (df_filtered['DCA_Weekly_Value'] - df_filtere
 
 def calc_twr(value: pd.Series, invested: pd.Series) -> float:
     """
-    Time-weighted return in %, independent of cash-flow timing.
-    value    : portfolio value series (same dates / index as invested)
-    invested : running total of capital contributed (+) or withdrawn (–)
+    Time-weighted return in %, ignoring the timing/size of cash flows.
     """
-    # cash flow occurring **at** the timestamp (first row = initial funding)
-    cf = invested.diff().fillna(invested)
+    cf   = invested.diff().fillna(invested)           # cash flow at each date
+    prev = (value - cf).shift(1)                      # equity just before CF
 
-    # portfolio value just **before** each cash flow hits
-    prev = (value - cf).shift(1)
-    # skip the very first row – there is no prior period return
-    period_ret = (value[1:] - cf[1:]) / prev[1:]
+    # keep only periods where we actually had money invested (>0)
+    factors = ((value - cf) / prev).where(prev > 0).dropna()
 
-    # geometric linking
-    twr = period_ret.prod() - 1
+    if factors.empty:          # happens when the back-test is <2 data-points
+        return np.nan
+
+    twr = factors.prod() - 1   # geometric link
     return twr * 100   
 
 # Plot
