@@ -225,18 +225,24 @@ df_filtered['DCA_Weekly_Return'] = (df_filtered['DCA_Weekly_Value'] - df_filtere
 
 def calc_twr(value: pd.Series, invested: pd.Series) -> float:
     """
-    Time-weighted return in %, ignoring the timing/size of cash flows.
+    Time-weighted return (geometric, %) – deposits only, no withdrawals.
     """
-    cf   = invested.diff().fillna(invested)           # cash flow at each date
-    prev = (value - cf).shift(1)                      # equity just before CF
+    # External cash paid in during the day
+    cf = invested.diff().fillna(invested)          # first row = initial deposit
 
-    # keep only periods where we actually had money invested (>0)
-    factors = ((value - cf) / prev).where(prev > 0).dropna()
+    # Portfolio value at start of day
+    prev_val = value.shift(1)
 
-    if factors.empty:          # happens when the back-test is <2 data-points
+    # Daily pure-investment return
+    daily_ret = (value.diff() - cf) / prev_val
+
+    # Skip periods before any capital was in the account
+    daily_ret = daily_ret.where(prev_val > 0).dropna()
+
+    if daily_ret.empty:
         return np.nan
 
-    twr = factors.prod() - 1   # geometric link
+    twr = (1 + daily_ret).prod() - 1
     return twr * 100   
 
 # Plot
