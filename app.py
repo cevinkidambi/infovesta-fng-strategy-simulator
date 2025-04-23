@@ -329,10 +329,10 @@ summary["CAGR (%)"] = [
 ]
 
 summary["TWRR (%)"] = [
-    calculate_twrr(df_filtered["FnG_Value"], df_filtered["FnG_Invested"]),
-    (final["BuyHold_Value"] / final["BuyHold_Invested"] - 1) * 100,  # one flow, simple return
-    calculate_twrr(df_filtered["DCA_Daily_Value"], df_filtered["DCA_Daily_Invested"]),
-    calculate_twrr(df_filtered["DCA_Weekly_Value"], df_filtered["DCA_Weekly_Invested"]),
+    calculate_twrr_fixed(df_filtered["FnG_Value"], df_filtered["FnG_Invested"]),
+    (final["BuyHold_Value"] / final["BuyHold_Invested"] - 1) * 100,
+    calculate_twrr_fixed(df_filtered["DCA_Daily_Value"], df_filtered["DCA_Daily_Invested"]),
+    calculate_twrr_fixed(df_filtered["DCA_Weekly_Value"], df_filtered["DCA_Weekly_Invested"]),
 ]
 
 # Compute Max Drawdown, Max Downside, Max Upside
