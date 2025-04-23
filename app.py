@@ -223,6 +223,19 @@ df_filtered['BuyHold_Return'] = (df_filtered['BuyHold_Value'] - df_filtered['Buy
 df_filtered['DCA_Daily_Return'] = (df_filtered['DCA_Daily_Value'] - df_filtered['DCA_Daily_Invested']) / df_filtered['DCA_Daily_Invested'] * 100
 df_filtered['DCA_Weekly_Return'] = (df_filtered['DCA_Weekly_Value'] - df_filtered['DCA_Weekly_Invested']) / df_filtered['DCA_Weekly_Invested'] * 100
 
+# Calculate Time-Weighted Return (TWR)
+def calculate_twr(daily_returns):
+    """Calculate annualized TWR from daily returns"""
+    # Compound the daily returns
+    cumulative_return = np.prod(1 + np.array(daily_returns)) - 1
+    
+    # Annualize (based on number of days in period)
+    n_days = len(daily_returns)
+    years = n_days / 365.25
+    annualized_twr = ((1 + cumulative_return) ** (1 / years)) - 1
+    
+    return annualized_twr * 100  # Convert to percentage
+
 # Plot
 mpl.rcParams.update({
     'text.color': 'white',
@@ -275,6 +288,15 @@ summary = pd.DataFrame({
         final['DCA_Weekly_Return']
     ]
 })
+
+# Calculate Time-Weighted Return for each strategy
+summary["TWR (%)"] = [
+    calculate_twr(df_filtered['FnG_Daily_Return']),
+    calculate_twr(df_filtered['BuyHold_Daily_Return']),
+    calculate_twr(df_filtered['DCA_Daily_Daily_Return']),
+    calculate_twr(df_filtered['DCA_Weekly_Daily_Return'])
+]
+
 # Reward/Risk Calculation
 strategies = {
     'FnG (Risk-Adjusted)': df_filtered['FnG_Return'],
