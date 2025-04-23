@@ -298,41 +298,11 @@ def calculate_cagr(final_value, invested, start, end):
     years = (end - start).days / 365.25
     return ((final_value / invested) ** (1 / years) - 1) * 100
 
-def calculate_twrr_fixed(values, invested):
-    twrr_parts = []
-    for i in range(1, len(values)):
-        prev = values[i - 1]
-        current = values[i]
-        flow = invested[i] - invested[i - 1]
-
-        if prev == 0:
-            continue
-
-        if flow != 0:
-            r = (current - flow) / prev
-        else:
-            r = current / prev
-
-        if np.isfinite(r):
-            twrr_parts.append(r)
-
-    if len(twrr_parts) == 0:
-        return 0.0
-
-    return (np.prod(twrr_parts) - 1) * 100
-
 summary["CAGR (%)"] = [
     calculate_cagr(final['FnG_Value'], final['FnG_Invested'], start_date, end_date),
     calculate_cagr(final['BuyHold_Value'], final['BuyHold_Invested'], start_date, end_date),
     calculate_cagr(final['DCA_Daily_Value'], final['DCA_Daily_Invested'], start_date, end_date),
     calculate_cagr(final['DCA_Weekly_Value'], final['DCA_Weekly_Invested'], start_date, end_date)
-]
-
-summary["TWRR (%)"] = [
-    calculate_twrr_fixed(df_filtered["FnG_Value"], df_filtered["FnG_Invested"]),
-    (final["BuyHold_Value"] / final["BuyHold_Invested"] - 1) * 100,
-    calculate_twrr_fixed(df_filtered["DCA_Daily_Value"], df_filtered["DCA_Daily_Invested"]),
-    calculate_twrr_fixed(df_filtered["DCA_Weekly_Value"], df_filtered["DCA_Weekly_Invested"]),
 ]
 
 # Compute Max Drawdown, Max Downside, Max Upside
@@ -389,7 +359,6 @@ st.dataframe(summary.set_index("Strategy").style.format({
     "Max Upside (%)": "{:.2f}",
     "Max Downside (%)": "{:.2f}",
     "Max Drawdown (%)": "{:.2f}",
-    "CAGR (%)": "{:.2f}",
-    "TWRR (%)": "{:.2f}"
+    "CAGR (%)": "{:.2f}"
 
 }))
