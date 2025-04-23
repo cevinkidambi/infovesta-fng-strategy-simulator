@@ -114,7 +114,7 @@ with st.sidebar.expander("ℹ️ About Infovesta Fear & Greed Index"):
     st.markdown("""
     **What is it?**
 
-    The Infovesta Fear and Greed (FnG) Index is a sentiment indicator ranging from 0 (extreme fear) to 100 (extreme greed), which is inspired by CNN’s Fear & Greed Index. While CNN uses 7 Fear & Greed indicators, the Infovesta FnG Index is an aggregate of 9 distinct indicators, each gauging a specific dimension of stock market activity. These indicators include BTC/IDR, JCI Foreign Flow, GOLD Spot, Market Momentum, IDX80 Mcclellan Summation Index (MSI), IDX80 Mcclellan Volume Summation Index (MVSI), Stock-Bond Spread, USD/IDR Spot, and Stock Price Strength. The Index assesses the deviation of each individual indicator, in relation to its typical fluctuations. The Index assigns equal weight to each indicator to avoid outliers. Each indicator is updated as soon as new data is available, including in weekends and after hours.
+    The Infovesta Fear and Greed (FnG) Index is a sentiment indicator ranging from 0 (extreme fear) to 100 (extreme greed), which is inspired by CNN's Fear & Greed Index. While CNN uses 7 Fear & Greed indicators, the Infovesta FnG Index is an aggregate of 9 distinct indicators, each gauging a specific dimension of stock market activity. These indicators include BTC/IDR, JCI Foreign Flow, GOLD Spot, Market Momentum, IDX80 Mcclellan Summation Index (MSI), IDX80 Mcclellan Volume Summation Index (MVSI), Stock-Bond Spread, USD/IDR Spot, and Stock Price Strength. The Index assesses the deviation of each individual indicator, in relation to its typical fluctuations. The Index assigns equal weight to each indicator to avoid outliers. Each indicator is updated as soon as new data is available, including in weekends and after hours.
 
     ### FnG Index Levels
     Below is our interpretation of Fear & Greed levels:
@@ -162,12 +162,30 @@ sell_rate = {"Aggressive": 0.02, "Moderate": 0.05, "Conservative": 0.10}[risk_mo
 # Filter data
 df_filtered = df[(df['date'] >= pd.to_datetime(start_date)) & (df['date'] <= pd.to_datetime(end_date))].copy()
 
+# Initialize arrays for daily returns
+fng_daily_returns = []  # For FnG Strategy
+bh_daily_returns = []   # For Buy & Hold
+daily_dca_returns = []  # For Daily DCA
+weekly_dca_returns = [] # For Weekly DCA
+
 # Initialize FnG strategy
 shares_held, cash_available, cash_invested = 0, 0, 0
 fng_values, fng_invested = [], []
+prev_value = None
 
 for i, row in df_filtered.iterrows():
     fnG, idx_price = row['FnG_Score'], row[benchmark_index]
+    
+    # Calculate daily return before any transactions (for TWR)
+    current_value = (shares_held * idx_price) + cash_available
+    
+    if prev_value is not None and prev_value > 0:
+        daily_return = current_value / prev_value - 1
+        fng_daily_returns.append(daily_return)
+    else:
+        fng_daily_returns.append(0)  # First day has no return
+    
+    # Strategy transactions
     if fnG <= buy_threshold:
         buy_amount = dca_amount + cash_available
         shares_bought = buy_amount / idx_price
@@ -178,37 +196,77 @@ for i, row in df_filtered.iterrows():
         shares_sold = shares_held * sell_rate
         cash_available += shares_sold * idx_price
         shares_held -= shares_sold
-
+    
+    # Update values after transactions
     total_value = shares_held * idx_price + cash_available
     fng_values.append(total_value)
     fng_invested.append(cash_invested)
+    prev_value = total_value
 
-# Buy & Hold
+# Buy & Hold with daily returns for TWR
 bh_shares = dca_amount / df_filtered[benchmark_index].iloc[0]
 df_filtered['BuyHold_Value'] = bh_shares * df_filtered[benchmark_index]
 df_filtered['BuyHold_Invested'] = dca_amount
 
-# Daily DCA
+# Calculate Buy & Hold daily returns for TWR
+bh_daily_returns = df_filtered[benchmark_index].pct_change().fillna(0).tolist()
+
+# Daily DCA with daily returns for TWR
 daily_shares, daily_invested = 0, 0
 daily_vals, daily_invested_list = [], []
-for _, row in df_filtered.iterrows():
-    daily_shares += dca_amount / row[benchmark_index]
+prev_value = None
+
+for i, row in df_filtered.iterrows():
+    current_price = row[benchmark_index]
+    
+    # Calculate daily return before transaction (for TWR)
+    current_value_before_dca = daily_shares * current_price
+    
+    if prev_value is not None and prev_value > 0:
+        daily_return = current_value_before_dca / prev_value - 1
+        daily_dca_returns.append(daily_return)
+    else:
+        daily_dca_returns.append(0)  # First day has no return
+    
+    # Execute strategy
+    daily_shares += dca_amount / current_price
     daily_invested += dca_amount
-    daily_vals.append(daily_shares * row[benchmark_index])
+    current_value = daily_shares * current_price
+    daily_vals.append(current_value)
     daily_invested_list.append(daily_invested)
+    
+    prev_value = current_value
 
 df_filtered['DCA_Daily_Value'] = daily_vals
 df_filtered['DCA_Daily_Invested'] = daily_invested_list
 
-# Weekly DCA
+# Weekly DCA with daily returns for TWR
 weekly_shares, weekly_invested = 0, 0
 weekly_vals, weekly_invested_list = [], []
+prev_value = None
+
 for i, row in df_filtered.iterrows():
+    current_price = row[benchmark_index]
+    
+    # Calculate daily return before transaction (for TWR)
+    current_value_before_dca = weekly_shares * current_price
+    
+    if prev_value is not None and prev_value > 0:
+        daily_return = current_value_before_dca / prev_value - 1
+        weekly_dca_returns.append(daily_return)
+    else:
+        weekly_dca_returns.append(0)  # First day has no return
+    
+    # Execute strategy
     if i % 7 == 0:
-        weekly_shares += dca_amount / row[benchmark_index]
+        weekly_shares += dca_amount / current_price
         weekly_invested += dca_amount
-    weekly_vals.append(weekly_shares * row[benchmark_index])
+    
+    current_value = weekly_shares * current_price
+    weekly_vals.append(current_value)
     weekly_invested_list.append(weekly_invested)
+    
+    prev_value = current_value
 
 df_filtered['DCA_Weekly_Value'] = weekly_vals
 df_filtered['DCA_Weekly_Invested'] = weekly_invested_list
@@ -222,6 +280,12 @@ df_filtered['FnG_Return'] = (df_filtered['FnG_Value'] - df_filtered['FnG_Investe
 df_filtered['BuyHold_Return'] = (df_filtered['BuyHold_Value'] - df_filtered['BuyHold_Invested']) / df_filtered['BuyHold_Invested'] * 100
 df_filtered['DCA_Daily_Return'] = (df_filtered['DCA_Daily_Value'] - df_filtered['DCA_Daily_Invested']) / df_filtered['DCA_Daily_Invested'] * 100
 df_filtered['DCA_Weekly_Return'] = (df_filtered['DCA_Weekly_Value'] - df_filtered['DCA_Weekly_Invested']) / df_filtered['DCA_Weekly_Invested'] * 100
+
+# Store daily returns for TWR calculation
+df_filtered['FnG_Daily_Return'] = fng_daily_returns
+df_filtered['BuyHold_Daily_Return'] = bh_daily_returns
+df_filtered['DCA_Daily_Daily_Return'] = daily_dca_returns
+df_filtered['DCA_Weekly_Daily_Return'] = weekly_dca_returns
 
 # Calculate Time-Weighted Return (TWR)
 def calculate_twr(daily_returns):
@@ -371,6 +435,19 @@ summary["Max Downside Date"] = max_downside_dates
 summary["Max Drawdown (%)"] = max_drawdowns
 summary["Max Drawdown Date"] = max_drawdown_dates
 
+# Add explainer about TWR vs CAGR
+with st.expander("ℹ️ Understanding TWR vs CAGR"):
+    st.markdown("""
+    **Time-Weighted Return (TWR)** measures the compound rate of growth in a portfolio independent of external cash flows. It represents the return that would have been earned by a single unit of investment held throughout the entire period.
+    
+    **Compound Annual Growth Rate (CAGR)** measures the mean annual growth rate of an investment over a specified time period longer than one year, assuming profits were reinvested at the end of each period.
+    
+    **Key differences:**
+    - TWR eliminates the distorting effects of cash inflows and outflows
+    - CAGR is more appropriate when evaluating the overall performance including the timing of investments
+    - For strategies with regular cash flows like DCA, the difference between TWR and CAGR can reveal the impact of investment timing
+    """)
+
 # Update table display
 st.subheader("📋 Final Strategy Summary")
 st.dataframe(summary.set_index("Strategy").style.format({
@@ -383,5 +460,4 @@ st.dataframe(summary.set_index("Strategy").style.format({
     "Max Downside (%)": "{:.2f}",
     "Max Drawdown (%)": "{:.2f}",
     "CAGR (%)": "{:.2f}"
-
 }))
