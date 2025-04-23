@@ -298,7 +298,7 @@ def calculate_cagr(final_value, invested, start, end):
     years = (end - start).days / 365.25
     return ((final_value / invested) ** (1 / years) - 1) * 100
 
-def calculate_twrr(values, invested):
+def calculate_twrr_fixed(values, invested):
     twrr_parts = []
     for i in range(1, len(values)):
         prev = values[i - 1]
@@ -306,7 +306,7 @@ def calculate_twrr(values, invested):
         flow = invested[i] - invested[i - 1]
 
         if prev == 0:
-            continue  # skip this subperiod due to invalid base
+            continue
 
         if flow != 0:
             r = (current - flow) / prev
