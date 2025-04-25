@@ -256,7 +256,7 @@ st.pyplot(fig)
 final = df_filtered.iloc[-1]
 summary = pd.DataFrame({
     "Strategy": ["FnG (Risk-Adjusted)", "Buy & Hold", "DCA Daily", "DCA Weekly"],
-    "Return (%)": [
+    "Return (MWR) (%)": [
         final['FnG_Return'],
         final['BuyHold_Return'],
         final['DCA_Daily_Return'],
