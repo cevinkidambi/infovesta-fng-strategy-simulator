@@ -221,29 +221,7 @@ df_filtered['FnG_Invested'] = fng_invested
 df_filtered['FnG_Return'] = (df_filtered['FnG_Value'] - df_filtered['FnG_Invested']) / df_filtered['FnG_Invested'] * 100
 df_filtered['BuyHold_Return'] = (df_filtered['BuyHold_Value'] - df_filtered['BuyHold_Invested']) / df_filtered['BuyHold_Invested'] * 100
 df_filtered['DCA_Daily_Return'] = (df_filtered['DCA_Daily_Value'] - df_filtered['DCA_Daily_Invested']) / df_filtered['DCA_Daily_Invested'] * 100
-df_filtered['DCA_Weekly_Return'] = (df_filtered['DCA_Weekly_Value'] - df_filtered['DCA_Weekly_Invested']) / df_filtered['DCA_Weekly_Invested'] * 100
-
-def calc_twr(value: pd.Series, invested: pd.Series) -> float:
-    """
-    Time-weighted return (geometric, %) – deposits only, no withdrawals.
-    """
-    # External cash paid in during the day
-    cf = invested.diff().fillna(invested)          # first row = initial deposit
-
-    # Portfolio value at start of day
-    prev_val = value.shift(1)
-
-    # Daily pure-investment return
-    daily_ret = (value.diff() - cf) / prev_val
-
-    # Skip periods before any capital was in the account
-    daily_ret = daily_ret.where(prev_val > 0).dropna()
-
-    if daily_ret.empty:
-        return np.nan
-
-    twr = (1 + daily_ret).prod() - 1
-    return twr * 100   
+df_filtered['DCA_Weekly_Return'] = (df_filtered['DCA_Weekly_Value'] - df_filtered['DCA_Weekly_Invested']) / df_filtered['DCA_Weekly_Invested'] * 100   
 
 # Plot
 mpl.rcParams.update({
@@ -304,13 +282,6 @@ strategies = {
     'DCA Daily': df_filtered['DCA_Daily_Return'],
     'DCA Weekly': df_filtered['DCA_Weekly_Return']
 }
-
-summary["TWR (%)"] = [
-    calc_twr(df_filtered['FnG_Value'],        df_filtered['FnG_Invested']),
-    calc_twr(df_filtered['BuyHold_Value'],    df_filtered['BuyHold_Invested']),
-    calc_twr(df_filtered['DCA_Daily_Value'],  df_filtered['DCA_Daily_Invested']),
-    calc_twr(df_filtered['DCA_Weekly_Value'], df_filtered['DCA_Weekly_Invested'])
-]
 
 reward_risk_data = []
 for strategy_name in summary["Strategy"]:
@@ -381,7 +352,6 @@ summary["Max Drawdown Date"] = max_drawdown_dates
 st.subheader("📋 Final Strategy Summary")
 st.dataframe(summary.set_index("Strategy").style.format({
     "Return (MWR) (%)": "{:.2f}",
-    "TWR (%)": "{:.2f}",
     "Reward/Risk": "{:.2f}",
     "Max Upside (%)": "{:.2f}",
     "Max Downside (%)": "{:.2f}",
