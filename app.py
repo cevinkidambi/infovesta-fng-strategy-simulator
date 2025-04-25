@@ -380,9 +380,7 @@ summary["Max Drawdown Date"] = max_drawdown_dates
 # Update table display
 st.subheader("📋 Final Strategy Summary")
 st.dataframe(summary.set_index("Strategy").style.format({
-    "Total Invested": "Rp{:,.0f}",
-    "Final Value": "Rp{:,.0f}",
-    "Return (%)": "{:.2f}",
+    "Return (MWR) (%)": "{:.2f}",
     "TWR (%)": "{:.2f}",
     "Reward/Risk": "{:.2f}",
     "Max Upside (%)": "{:.2f}",
