@@ -148,13 +148,12 @@ with col6:
     include_cash = st.checkbox("Include Uninvested Cash?", value=True)
 
 # Advanced thresholds in expander
-# Advanced thresholds in expander
 with st.expander("⚙️ Fine-tune FnG Thresholds"):
     col7, col8 = st.columns(2)
     with col7:
-        buy_threshold = st.slider("Buy threshold (FnG ≥)", 0, 100, value=75, step=1)
+        buy_threshold = st.slider("Buy threshold (FnG ≤)", 0, 50, value=25, step=1)
     with col8:
-        sell_threshold = st.slider("Sell threshold (FnG <)", 0, 100, value=25, step=1)
+        sell_threshold = st.slider("Sell threshold (FnG >)", 50, 100, value=75, step=1)
 
 
 # Strategy sell rates based on risk mode
@@ -169,13 +168,13 @@ fng_values, fng_invested = [], []
 
 for i, row in df_filtered.iterrows():
     fnG, idx_price = row['FnG_Score'], row[benchmark_index]
-    if fnG >= buy_threshold:  # ⬅️ reversed: BUY when FnG >= sell_threshold
+    if fnG <= buy_threshold:
         buy_amount = dca_amount + cash_available
         shares_bought = buy_amount / idx_price
         shares_held += shares_bought
         cash_invested += dca_amount
         cash_available = 0
-    elif fnG < sell_threshold:  # ⬅️ reversed: SELL when FnG < buy_threshold
+    elif fnG > sell_threshold:
         shares_sold = shares_held * sell_rate
         cash_available += shares_sold * idx_price
         shares_held -= shares_sold
