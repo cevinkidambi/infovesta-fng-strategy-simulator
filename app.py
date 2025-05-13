@@ -152,9 +152,9 @@ with col6:
 with st.expander("⚙️ Fine-tune FnG Thresholds"):
     col7, col8 = st.columns(2)
     with col7:
-        buy_threshold = st.slider("Buy threshold (FnG ≥)", 50, 100, value=75, step=1)
+        buy_threshold = st.slider("Buy threshold (FnG ≥)", 0, 100, value=75, step=1)
     with col8:
-        sell_threshold = st.slider("Sell threshold (FnG <)", 0, 50, value=25, step=1)
+        sell_threshold = st.slider("Sell threshold (FnG <)", 0, 100, value=25, step=1)
 
 
 # Strategy sell rates based on risk mode
