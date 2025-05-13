@@ -168,13 +168,13 @@ fng_values, fng_invested = [], []
 
 for i, row in df_filtered.iterrows():
     fnG, idx_price = row['FnG_Score'], row[benchmark_index]
-    if fnG <= buy_threshold:
+    if fnG >= sell_threshold:  # BUY when high
         buy_amount = dca_amount + cash_available
         shares_bought = buy_amount / idx_price
         shares_held += shares_bought
         cash_invested += dca_amount
         cash_available = 0
-    elif fnG > sell_threshold:
+    elif fnG <= buy_threshold:  # SELL when low
         shares_sold = shares_held * sell_rate
         cash_available += shares_sold * idx_price
         shares_held -= shares_sold
